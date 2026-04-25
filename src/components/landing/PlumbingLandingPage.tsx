@@ -10,7 +10,10 @@ import { Footer } from './Footer';
 
 export function PlumbingLandingPage() {
   return (
-    <div className="min-h-screen bg-navy-950 text-white">
+    <div
+      className="min-h-screen text-white"
+      style={{ background: '#020817', overflowX: 'hidden' }}
+    >
       <EmergencyCTA />
       <Navigation />
       <HeroSection />

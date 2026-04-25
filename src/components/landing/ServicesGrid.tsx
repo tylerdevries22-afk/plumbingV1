@@ -117,38 +117,65 @@ function ServiceCard({ service, color }: { service: Service; color: string }) {
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -5 }}
-      className="relative p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all group"
+      transition={{ duration: 0.25 }}
+      className="relative p-4 rounded-xl border transition-all duration-300 group cursor-default"
+      style={{
+        background: 'rgba(255,255,255,0.04)',
+        backdropFilter: 'blur(4px)',
+        borderColor: 'rgba(255,255,255,0.08)',
+      }}
+      whileHover={{
+        borderColor: `${color}40`,
+        backgroundColor: 'rgba(255,255,255,0.08)',
+      }}
     >
       {service.popular && (
-        <span className="absolute top-3 right-3 text-xs px-2 py-0.5 rounded-full font-medium" style={{ backgroundColor: `${color}20`, color }}>
+        <span
+          className="absolute top-3 right-3 text-xs px-2 py-0.5 rounded-full font-semibold"
+          style={{ backgroundColor: `${color}20`, color }}
+        >
           Popular
         </span>
       )}
-      <h4 className="text-white font-semibold mb-1.5 text-sm pr-16">{service.name}</h4>
+      <h4 className="text-white font-semibold mb-1.5 text-sm pr-16 leading-snug">{service.name}</h4>
       <p className="text-slate-500 text-xs leading-relaxed">{service.description}</p>
     </motion.div>
   );
 }
 
-function CategoryAccordion({ category }: { category: Category }) {
-  const [open, setOpen] = useState(category.id === 'core');
+function CategoryAccordion({ category, defaultOpen }: { category: Category; defaultOpen?: boolean }) {
+  const [open, setOpen] = useState(!!defaultOpen);
 
   return (
-    <div className="border border-white/10 rounded-2xl overflow-hidden">
+    <div
+      className="rounded-2xl overflow-hidden border transition-colors duration-300"
+      style={{
+        borderColor: open ? `${category.color}25` : 'rgba(255,255,255,0.08)',
+      }}
+    >
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-5 text-left hover:bg-white/5 transition-colors"
+        className="w-full flex items-center justify-between p-5 text-left transition-colors duration-200"
+        style={{
+          background: open ? `${category.color}08` : 'rgba(255,255,255,0.02)',
+        }}
       >
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${category.color}15`, color: category.color }}>
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            style={{ backgroundColor: `${category.color}15`, color: category.color }}
+          >
             {category.icon}
           </div>
           <div>
-            <span className="text-white font-semibold">{category.label}</span>
-            <span className="ml-2 text-xs text-slate-500">{category.services.length} services</span>
+            <span className="text-white font-semibold block leading-tight">{category.label}</span>
+            <span className="text-slate-500 text-xs">{category.services.length} services</span>
           </div>
         </div>
-        <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
+        <motion.div
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.25 }}
+        >
           <ChevronDown size={18} className="text-slate-400" />
         </motion.div>
       </button>
@@ -156,12 +183,13 @@ function CategoryAccordion({ category }: { category: Category }) {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ height: 0 }}
-            animate={{ height: 'auto' }}
-            exit={{ height: 0 }}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
             className="overflow-hidden"
           >
-            <div className="px-5 pb-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            <div className="px-5 pb-5 pt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {category.services.map(s => (
                 <ServiceCard key={s.name} service={s} color={category.color} />
               ))}
@@ -177,12 +205,13 @@ export function ServicesGrid() {
   return (
     <section id="services" className="py-24 bg-navy-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
         <div className="text-center mb-16">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="inline-flex items-center gap-2 bg-electric-500/10 border border-electric-500/30 rounded-full px-4 py-1.5 text-electric-400 text-sm font-medium mb-4"
+            className="inline-flex items-center gap-2 bg-electric-500/10 border border-electric-500/25 rounded-full px-4 py-1.5 text-electric-400 text-sm font-medium mb-4"
           >
             Full Service Plumbing
           </motion.div>
@@ -191,22 +220,25 @@ export function ServicesGrid() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-4xl sm:text-5xl font-black text-white mb-4"
+            className="text-4xl sm:text-5xl font-black text-white mb-4 leading-tight"
           >
             Everything plumbing,
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-600"> under one roof</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric-400 to-electric-500">
+              {' '}under one roof
+            </span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.2 }}
-            className="text-slate-400 text-lg max-w-2xl mx-auto"
+            className="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed"
           >
             From a dripping faucet to a full home repipe — Tyrooter handles it all with licensed technicians and upfront pricing.
           </motion.p>
         </div>
 
+        {/* Accordion list */}
         <div className="flex flex-col gap-3">
           {categories.map((cat, i) => (
             <motion.div
@@ -214,9 +246,9 @@ export function ServicesGrid() {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
+              transition={{ delay: i * 0.04 }}
             >
-              <CategoryAccordion category={cat} />
+              <CategoryAccordion category={cat} defaultOpen={cat.id === 'core'} />
             </motion.div>
           ))}
         </div>
